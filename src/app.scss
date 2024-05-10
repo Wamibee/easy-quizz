@@ -1,8 +1,12 @@
-$black : #151818;
-$white: #e7e7e7;
-$green: #c1ff69;
+$black : rgb(21, 24, 24);
+$white: rgb(231, 231, 231);
+$green: rgb(193, 255, 105);
+$crazy-green: rgb(158, 242, 40);
 
 @import url('https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
+// Icones 
+@import url("https://css.gg/css");
 
 html {
 	background-color: $green;
@@ -11,6 +15,8 @@ html {
 	justify-content: center;
 	width: 100%;
 	height: 100vh;
+	font-family: 'Lato', sans-serif;
+	font-size: 17px;
 
 	body, main{
 		width: 100%;
@@ -22,7 +28,7 @@ section{
 	background-color: $black;
 	border-radius: 25px;
 	margin: 30px;
-	padding: 30px 40px;
+	padding: 40px 45px;
 	color: $white;
 }
 
@@ -168,4 +174,88 @@ h2 {
 	font-family: "Lato", sans-serif;
 	font-weight: 900;
 	font-style: italic;
+}
+
+button{
+	font-family: "Arvo", sans-serif;
+	font-style: normal;
+	background-color: $green;
+	color: $black;
+	border: none;
+	border-radius: 5px;
+	padding: 15px 25px;
+	cursor: pointer;
+	font-weight: 600;
+	font-size: 18px;
+	margin-top: 20px;
+	display: flex;
+	align-items: center;
+	transition: all 0.1s ease-in-out;
+	cursor: pointer;
+
+	&:hover{
+		background-color: $black;
+		color: $green;
+		outline: 3px solid $green;
+	}
+
+	i{
+		font-weight: 600;
+		margin-right: 10px;
+	}
+
+	&.secondary{
+		background-color: $black;
+		color: $white;
+
+		i{
+			margin-left: 10px;
+		}
+	}
+}
+
+.quizz-header{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+
+	h1{
+		margin: 0;
+	}
+
+	button{
+		margin: 0;
+		padding: 5px;
+	}
+}
+
+.results{
+	display: flex;
+	flex-direction: column;
+
+	.question{
+		margin: 5px 0;
+		padding: 15px 20px;
+		border-radius: 4px;
+		background: $white;
+		color: $black;
+	}
+}
+
+.flex-container{
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+i{
+	font-size: 30px;
+	margin-right: 10px;
+}
+
+hr{
+	margin: 20px 0;
+	opacity: .2;
 }
