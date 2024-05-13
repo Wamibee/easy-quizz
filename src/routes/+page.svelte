@@ -96,6 +96,17 @@
 				answerIsValid = false;
 			}
 		}
+
+		// Si la question est de type choix radio, alors on récupère la valeur de l'input radio
+		if(quizz.questions[questionId - 1].type === "checkbox") {
+			if(document.querySelector("input:checked")) {
+				for(let i = 0; i < document.querySelectorAll("input:checked").length; i++) {
+					answerValue += document.querySelectorAll("input:checked")[i].value + ",";
+				}
+			} else {
+				answerIsValid = false;
+			}
+		}
 		
 		if(answerValue) {
 			// Sauvegarder la réponse
@@ -186,7 +197,6 @@
 						<p>{quizz.questions[questionId - 1].description}</p>
 					{/if}
 					
-					
 					<div class="question-input-section">
 						<!-- Si la question est de type texte ou url, alors on met un input -->
 						{#if quizz.questions[questionId - 1].type === "text" || quizz.questions[questionId - 1].type === "url"}
@@ -194,7 +204,18 @@
 						{/if}
 
 						<!-- Si la question est de type choix multiple, alors on met des boutons checkbox -->
-						<!-- On gérera les checkbox plus tard -->
+						{#if quizz.questions[questionId - 1].type === "checkbox"}
+							{#each quizz.questions[questionId - 1].answers as answer}
+								<label class="input-checkbox">
+									{#if answers[questionId] == answer.id}
+										<input type="checkbox" name="answer" value={answer.id} checked />
+									{:else}
+										<input type="checkbox" name="answer" value={answer.id} />
+									{/if}
+									{answer.label}
+								</label>
+							{/each}
+						{/if}
 
 						<!-- Si la question est de type choix multiple, alors on met des boutons radio -->
 						{#if quizz.questions[questionId - 1].type === "radio"}
@@ -209,7 +230,7 @@
 								</label>
 							{/each}
 						{/if}
-							
+						
 					</div>
 
 					{#if answerIsValid === false}
@@ -237,7 +258,7 @@
 									<!-- Si c'était une question à choix, lister les choix et marqué celui choisi -->
 									{#if question.answers.length > 0}
 										{#each question.answers as answer}
-											<li class="answer-option {answer.is_correct ? 'answer-valid' : 'answer-not-valid'} {answers[question.id] == answer.id ? 'selected-answer' : ''}">
+											<li class="answer-option {answer.is_correct ? 'answer-valid' : 'answer-not-valid'} {answers[question.id] == answer.id ? 'selected-answer' : ''} {(question.type == "checkbox" && answers[question.id] && answers[question.id].split(',').includes(answer.id.toString())) ? 'selected-answer' : ''}">
 												<div class="answer-line italic">
 													{#if answer.is_correct}
 														<i class="gg-check"></i>
@@ -245,7 +266,10 @@
 														<i class="gg-close"></i>
 													{/if}
 													{answer.label}
-													{#if answers[question.id] == answer.id}
+													{#if question.type == "checkbox" && answers[question.id] && answers[question.id].split(',').includes(answer.id.toString())}
+														&nbsp;&nbsp;(votre réponse)
+													{/if}
+													{#if question.type == "radio" && answers[question.id] == answer.id}
 														&nbsp;&nbsp;(votre réponse)
 													{/if}
 												</div>
@@ -266,7 +290,9 @@
 												<span>Mauvaise réponse</span>&nbsp;:&nbsp;<span class="italic">{answers[question.id]}</span>
 											</div>
 
-											<p class='explanation'>La réponse attendue doit respecter le format suivant : <code>{question.regex_check.replace(/\\/g, '')}</code></p>
+											<p class='explanation'>La réponse attendue était : 
+												<code>{question.regex_check.replace(/\\s\+/g, ' ').replace(/\\/g, '')}</code>
+											</p>
 										{/if}
 									{/if}
 								</p>

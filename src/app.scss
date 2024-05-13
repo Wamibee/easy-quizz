@@ -15,7 +15,7 @@ html {
 	align-items: center;
 	justify-content: center;
 	width: 100%;
-	height: 100vh;
+	min-height: 100vh;
 	font-family: 'Lato', sans-serif;
 	font-size: 17px;
 
@@ -274,7 +274,7 @@ hr{
 		min-width: 50%;
 	}
 
-	.input-radio{
+	.input-radio, .input-checkbox{
 		margin: 10px 0;
 		display: flex;
 		align-items: center;
@@ -289,7 +289,7 @@ hr{
 			cursor: pointer;
 		}
 		
-		input[type="radio"]{
+		input[type="radio"], input[type="checkbox"]{
 			margin-right: 10px;
 		}
 	}
