@@ -22,6 +22,17 @@
 
 			if(storedStep && storedStep.questionId >= 0) {
 				questionId = storedStep.questionId;
+
+				let userAnswers = await db.quizzAnswers.where("quizzId").equals(quizzId).toArray();
+
+				if(userAnswers.length > 0) {
+					userAnswers.forEach(answer => {
+						answers[answer.questionId] = answer.answer;
+					});
+				} else {
+					answers = {};
+					questionId = 0;
+				}
 			} else {
 				await db.quizzStep.add({
 					quizzId,
@@ -79,7 +90,11 @@
 
 		// Si la question est de type choix radio, alors on récupère la valeur de l'input radio
 		if(quizz.questions[questionId - 1].type === "radio") {
-			answerValue = document.querySelector("input:checked").value;
+			if(document.querySelector("input:checked")) {
+				answerValue = document.querySelector("input:checked").value;
+			} else {
+				answerIsValid = false;
+			}
 		}
 		
 		if(answerValue) {
@@ -103,6 +118,7 @@
 			}
 
 			// Passer à la question suivante
+			answerIsValid = true;
 			nextStep();
 		} else {
 			answerIsValid = false;
@@ -111,6 +127,17 @@
 
 	const quizz = data?.quizzes?.find(q => q.slug === selectedQuizz);
 	if(quizz) quizzId = quizz.id;
+
+	async function reset() {
+		// Supprimer les réponses
+		await db.quizzAnswers.where("quizzId").equals(quizzId).delete();
+
+		// Supprimer l'étape
+		await db.quizzStep.where("quizzId").equals(quizzId).delete();
+
+		// Recharger la page
+		location.reload();
+	}
 
 	// Hook to run on component mount
     onMount(() => {
@@ -141,7 +168,6 @@
 				{#if questionId === 0}
 					<h1>{quizz.title}</h1>
 					<p>{quizz.description}</p>
-					<!-- Au clic sur bouton, alerte "ok" -->
 					<button on:click={nextStep}>
 						<i class="gg-arrow-right"></i>
 						<span>Commencer</span>
@@ -156,23 +182,30 @@
 					<h1>{quizz.questions[questionId - 1].title}</h1>
 					<p>{quizz.questions[questionId - 1].description}</p>
 					
-					<!-- Si la question est de type texte ou url, alors on met un input -->
-					{#if quizz.questions[questionId - 1].type === "text" || quizz.questions[questionId - 1].type === "url"}
-						<input type="{quizz.questions[questionId - 1].type}" />
-					{/if}
+					<div class="question-input-section">
+						<!-- Si la question est de type texte ou url, alors on met un input -->
+						{#if quizz.questions[questionId - 1].type === "text" || quizz.questions[questionId - 1].type === "url"}
+							<input placeholder="Insérez une réponse" type="{quizz.questions[questionId - 1].type}" value="{answers[questionId] ? answers[questionId] : ''}" />
+						{/if}
 
-					<!-- Si la question est de type choix multiple, alors on met des boutons checkbox -->
-					<!-- On gérera les checkbox plus tard -->
+						<!-- Si la question est de type choix multiple, alors on met des boutons checkbox -->
+						<!-- On gérera les checkbox plus tard -->
 
-					<!-- Si la question est de type choix multiple, alors on met des boutons radio -->
-					{#if quizz.questions[questionId - 1].type === "radio"}
-						{#each quizz.questions[questionId - 1].answers as answer}
-							<label>
-								<input type="radio" name="answer" value={answer.id} />
-								{answer.label}
-							</label>
-						{/each}
-					{/if}
+						<!-- Si la question est de type choix multiple, alors on met des boutons radio -->
+						{#if quizz.questions[questionId - 1].type === "radio"}
+							{#each quizz.questions[questionId - 1].answers as answer}
+								<label class="input-radio">
+									{#if answers[questionId] == answer.id}
+										<input type="radio" name="answer" value={answer.id} checked />
+									{:else}
+										<input type="radio" name="answer" value={answer.id} />
+									{/if}
+									{answer.label}
+								</label>
+							{/each}
+						{/if}
+							
+					</div>
 
 					{#if answerIsValid === false}
 						<p class="error">Veuillez renseigner une réponse !</p>
@@ -183,12 +216,7 @@
 					<h1>C'est fini !</h1>
 					<p>Le quizz est enfin terminé, vous pouvez consulter le récapitulatif des résultats ci-dessous !</p>
 
-					<button on:click={() => {
-						if(confirm("Êtes-vous sûr de vouloir recommencer ?")) {
-							db.quizzStep.clear();
-							questionId = 0;
-						}
-					}}>Recommencer</button>
+					<button on:click={reset}>Recommencer</button>
 
 					<hr>
 
@@ -197,12 +225,47 @@
 					<div class="results">
 						{#each quizz.questions as question}
 							<div class="question">
-								<b>{question.title}</b>
-								<p>{answers[question.id]}</p>
+								<b>Question #{question.id} : </b><span class="italic">{question.title}</span>
+								<p>
+									<!-- Si c'est un object, lister les clés -->
+
+									<!-- Si c'était une question à choix, lister les choix et marqué celui choisi -->
+									{#if question.answers.length > 0}
+										{#each question.answers as answer}
+											<li class="answer-option {answer.is_correct ? 'answer-valid' : 'answer-not-valid'}">
+												<div class="answer-line italic">
+													{#if answer.is_correct}
+														<i class="gg-check"></i>
+													{:else}
+														<i class="gg-close"></i>
+													{/if}
+													{answer.label}
+													{#if answers[question.id] == answer.id}
+														&nbsp;&nbsp;(votre réponse)
+													{/if}
+												</div>
+												{#if answer.explanation}
+													<div class="answer-check-explanation">{answer.explanation}</div>
+												{/if}
+											</li>
+										{/each}
+									{:else}
+										{#if answers[question.id] && new RegExp(question.regex_check).test(answers[question.id])}
+											<div class="answer-check ok">
+												<i class="gg-check"></i>
+												<span>Bonne réponse</span>&nbsp;:&nbsp;<span class="italic">{answers[question.id]}</span>
+											</div>
+										{:else}
+											<div class="answer-check not-ok">
+												<i class="gg-close"></i>
+												<span>Mauvaise réponse</span>&nbsp;:&nbsp;<span class="italic">{answers[question.id]}</span>
+											</div>
+
+											<p class='explanation'>La réponse attendue doit respecter le format suivant : <code>{question.regex_check.replace(/\\/g, '')}</code></p>
+										{/if}
+									{/if}
+								</p>
 								<ul>
-									{#each question.answers as answer}
-										<li>{answer.label}</li>
-									{/each}
 								</ul>
 							</div>
 						{/each}
