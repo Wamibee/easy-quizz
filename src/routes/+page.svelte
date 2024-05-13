@@ -179,8 +179,13 @@
 						</button>
 						<span class="quizz-step">Question {questionId} / {quizz.questions.length}</span>
 					</div>
-					<h1>{quizz.questions[questionId - 1].title}</h1>
-					<p>{quizz.questions[questionId - 1].description}</p>
+					
+					<h1 class="">Question #{questionId}</h1>
+					<h2 class="">{quizz.questions[questionId - 1].title}</h2>
+					{#if quizz.questions[questionId - 1].description}
+						<p>{quizz.questions[questionId - 1].description}</p>
+					{/if}
+					
 					
 					<div class="question-input-section">
 						<!-- Si la question est de type texte ou url, alors on met un input -->
@@ -232,7 +237,7 @@
 									<!-- Si c'était une question à choix, lister les choix et marqué celui choisi -->
 									{#if question.answers.length > 0}
 										{#each question.answers as answer}
-											<li class="answer-option {answer.is_correct ? 'answer-valid' : 'answer-not-valid'}">
+											<li class="answer-option {answer.is_correct ? 'answer-valid' : 'answer-not-valid'} {answers[question.id] == answer.id ? 'selected-answer' : ''}">
 												<div class="answer-line italic">
 													{#if answer.is_correct}
 														<i class="gg-check"></i>

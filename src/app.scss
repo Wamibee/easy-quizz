@@ -2,6 +2,7 @@ $black : rgb(21, 24, 24);
 $white: rgb(231, 231, 231);
 $green: rgb(193, 255, 105);
 $crazy-green: rgb(158, 242, 40);
+$orange: rgb(255, 193, 132);
 
 @import url('https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
 
@@ -262,7 +263,7 @@ hr{
 
 .question-input-section{
 	display: flex;
-	align-items: center;
+	flex-direction: column;
 
 	input[type="text"], input[type="url"]{
 		padding: 15px 10px;
@@ -274,12 +275,13 @@ hr{
 	}
 
 	.input-radio{
-		margin-right: 10px;
+		margin: 10px 0;
 		display: flex;
 		align-items: center;
 		border: 1px solid $white;
 		padding: 10px;
 		border-radius: 5px;
+		min-width: 200px;
 
 		&:hover{
 			background-color: $white;
@@ -320,7 +322,7 @@ code{
 	}
 
 	&.not-ok{
-		background-color: rgb(255, 137, 137);
+		background-color: $orange;
 		color: $black;
 	}
 }
@@ -330,7 +332,7 @@ code{
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	border: 2px solid grey;
+	background-color: rgb(211, 211, 211);
 	padding: 10px;
 	border-radius: 5px;
 
@@ -346,4 +348,14 @@ code{
 
 .answer-check-explanation{
 	float: right;
+	font-size: 12px;
+}
+
+.selected-answer{
+	background-color: rgb(200, 200, 200);
+
+	&:not(.answer-valid){
+		border-color: $orange;
+		background-color: $orange;
+	}
 }
