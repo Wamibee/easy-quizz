@@ -1,6 +1,8 @@
 import { env } from '$env/dynamic/private';
 import { createPool, sql } from '@vercel/postgres';
 
+export const prerender = false;
+
 /** @type {import('./$types').LayoutServerLoad} */
 export async function load() {
 	const db = createPool({ connectionString: env.POSTGRES_URL });
