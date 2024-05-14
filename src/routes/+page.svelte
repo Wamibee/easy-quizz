@@ -254,7 +254,7 @@
 					<h1>Vous avez répondu à toutes les questions, bravo !</h1>
 					<p>Le quizz est enfin terminé, vous pouvez consulter vos résultats ci-dessous !</p>
 
-					<button on:click={reset}>Recommencer</button>
+					<button on:click={reset} style="{!quizz.retry ? 'display: none' : ''}">Recommencer</button>
 
 					<hr>
 
