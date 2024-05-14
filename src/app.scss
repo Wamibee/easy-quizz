@@ -1,7 +1,7 @@
 $black : rgb(21, 24, 24);
 $white: rgb(231, 231, 231);
-$green: rgb(193, 255, 105);
-$crazy-green: rgb(158, 242, 40);
+$green: rgb(176, 242, 83);
+$theme: #2c8edb;
 $orange: rgb(255, 193, 132);
 
 @import url('https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
@@ -10,7 +10,7 @@ $orange: rgb(255, 193, 132);
 @import url("https://css.gg/css");
 
 html {
-	background-color: $green;
+	background-color: $theme;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -180,7 +180,7 @@ h2 {
 button{
 	font-family: "Arvo", sans-serif;
 	font-style: normal;
-	background-color: $green;
+	background-color: $theme;
 	color: $black;
 	border: none;
 	border-radius: 5px;
@@ -196,8 +196,8 @@ button{
 
 	&:hover{
 		background-color: $black;
-		color: $green;
-		outline: 3px solid $green;
+		color: $theme;
+		outline: 3px solid $theme;
 	}
 
 	i{
@@ -375,6 +375,6 @@ a{
 	color: white;
 
 	&:hover{
-		color: $green;
+		color: $theme;
 	}
 }
