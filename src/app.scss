@@ -236,11 +236,15 @@ button{
 	flex-direction: column;
 
 	.question{
-		margin: 5px 0;
-		padding: 15px 20px;
+		margin: 10px 0;
+		padding: 25px 20px;
 		border-radius: 4px;
 		background: $white;
 		color: $black;
+
+		a{
+			color: black;
+		}
 	}
 }
 
@@ -357,5 +361,20 @@ code{
 	&:not(.answer-valid){
 		border-color: $orange;
 		background-color: $orange;
+	}
+}
+
+.quizz-description{
+	margin: 15px 0;
+	max-width: 1000px;
+	font-size: 18px;
+	letter-spacing: 1px;
+}
+
+a{
+	color: white;
+
+	&:hover{
+		color: $green;
 	}
 }

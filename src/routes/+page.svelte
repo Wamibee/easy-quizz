@@ -178,10 +178,11 @@
 			{:else}
 				{#if questionId === 0}
 					<h1>{@html quizz.title}</h1>
-					<p>{@html quizz.description}</p>
+					<p class="quizz-description">{@html quizz.description}</p>
+					<hr>
 					<button on:click={nextStep}>
 						<i class="gg-arrow-right"></i>
-						<span>Commencer</span>
+						<span>C'est parti !</span>
 					</button>
 				{:else if questionId > 0 && questionId <= quizz.questions.length}
 					<div class="quizz-header">
@@ -192,9 +193,17 @@
 					</div>
 					
 					<h1 class="">Question #{questionId}</h1>
-					<h2 class="">{quizz.questions[questionId - 1].title}</h2>
+					<h2 class="">{@html quizz.questions[questionId - 1].title}</h2>
 					{#if quizz.questions[questionId - 1].description}
-						<p>{quizz.questions[questionId - 1].description}</p>
+						<p>{@html quizz.questions[questionId - 1].description}</p>
+					{/if}
+
+					{#if quizz.questions[questionId - 1].type === "checkbox"}
+						<p class="italic">Choisissez une ou plusieurs réponses</p>
+					{/if}
+
+					{#if quizz.questions[questionId - 1].type === "radio"}
+						<p class="italic">Choisissez une seule réponse</p>
 					{/if}
 					
 					<div class="question-input-section">
@@ -239,8 +248,8 @@
 
 					<button on:click={saveAnswer}>Valider</button>
 				{:else}
-					<h1>C'est fini !</h1>
-					<p>Le quizz est enfin terminé, vous pouvez consulter le récapitulatif des résultats ci-dessous !</p>
+					<h1>Vous avez répondu à toutes les questions, bravo !</h1>
+					<p>Le quizz est enfin terminé, vous pouvez consulter vos résultats ci-dessous !</p>
 
 					<button on:click={reset}>Recommencer</button>
 
@@ -251,53 +260,51 @@
 					<div class="results">
 						{#each quizz.questions as question}
 							<div class="question">
-								<b>Question #{question.id} : </b><span class="italic">{question.title}</span>
-								<p>
-									<!-- Si c'est un object, lister les clés -->
-
-									<!-- Si c'était une question à choix, lister les choix et marqué celui choisi -->
-									{#if question.answers.length > 0}
-										{#each question.answers as answer}
-											<li class="answer-option {answer.is_correct ? 'answer-valid' : 'answer-not-valid'} {answers[question.id] == answer.id ? 'selected-answer' : ''} {(question.type == "checkbox" && answers[question.id] && answers[question.id].split(',').includes(answer.id.toString())) ? 'selected-answer' : ''}">
-												<div class="answer-line italic">
-													{#if answer.is_correct}
-														<i class="gg-check"></i>
-													{:else}
-														<i class="gg-close"></i>
-													{/if}
-													{answer.label}
-													{#if question.type == "checkbox" && answers[question.id] && answers[question.id].split(',').includes(answer.id.toString())}
-														&nbsp;&nbsp;(votre réponse)
-													{/if}
-													{#if question.type == "radio" && answers[question.id] == answer.id}
-														&nbsp;&nbsp;(votre réponse)
-													{/if}
-												</div>
-												{#if answer.explanation}
-													<div class="answer-check-explanation">{answer.explanation}</div>
+								<div>
+									<b>Question #{question.id} : </b>
+									<span class="italic">{@html question.title}</span>
+								</div>
+								<hr>
+								<!-- Si c'était une question à choix, lister les choix et marqué celui choisi -->
+								{#if question.answers.length > 0}
+									{#each question.answers as answer}
+										<li class="answer-option {answer.is_correct ? 'answer-valid' : 'answer-not-valid'} {answers[question.id] == answer.id ? 'selected-answer' : ''} {(question.type == "checkbox" && answers[question.id] && answers[question.id].split(',').includes(answer.id.toString())) ? 'selected-answer' : ''}">
+											<div class="answer-line italic">
+												{#if answer.is_correct}
+													<i class="gg-check"></i>
+												{:else}
+													<i class="gg-close"></i>
 												{/if}
-											</li>
-										{/each}
+												{answer.label}
+												{#if question.type == "checkbox" && answers[question.id] && answers[question.id].split(',').includes(answer.id.toString())}
+													&nbsp;&nbsp;(votre réponse)
+												{/if}
+												{#if question.type == "radio" && answers[question.id] == answer.id}
+													&nbsp;&nbsp;(votre réponse)
+												{/if}
+											</div>
+											{#if answer.explanation}
+												<div class="answer-check-explanation">{answer.explanation}</div>
+											{/if}
+										</li>
+									{/each}
+								{:else}
+									{#if answers[question.id] && new RegExp(question.regex_check, 'i').test(answers[question.id])}
+										<div class="answer-check ok">
+											<i class="gg-check"></i>
+											<span>Bonne réponse</span>&nbsp;:&nbsp;<span class="italic">{answers[question.id]}</span>
+										</div>
 									{:else}
-										{#if answers[question.id] && new RegExp(question.regex_check, 'i').test(answers[question.id])}
-											<div class="answer-check ok">
-												<i class="gg-check"></i>
-												<span>Bonne réponse</span>&nbsp;:&nbsp;<span class="italic">{answers[question.id]}</span>
-											</div>
-										{:else}
-											<div class="answer-check not-ok">
-												<i class="gg-close"></i>
-												<span>Mauvaise réponse</span>&nbsp;:&nbsp;<span class="italic">{answers[question.id]}</span>
-											</div>
+										<div class="answer-check not-ok">
+											<i class="gg-close"></i>
+											<span>Mauvaise réponse</span>&nbsp;:&nbsp;<span class="italic">{answers[question.id]}</span>
+										</div>
 
-											<p class='explanation'>La réponse attendue était : 
-												<code>{question.regex_check.replace(/\\s\*/g, ' ').replace(/\\s\+/g, ' ').replace(/\\/g, '')}</code>
-											</p>
-										{/if}
+										<p class='explanation'>La réponse attendue était : 
+											<code>{question.regex_check.replace(/\\s\*/g, ' ').replace(/\\s\+/g, ' ').replace(/\\/g, '')}</code>
+										</p>
 									{/if}
-								</p>
-								<ul>
-								</ul>
+								{/if}
 							</div>
 						{/each}
 					</div>
