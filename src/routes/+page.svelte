@@ -177,8 +177,8 @@
 				</div>
 			{:else}
 				{#if questionId === 0}
-					<h1>{quizz.title}</h1>
-					<p>{quizz.description}</p>
+					<h1>{@html quizz.title}</h1>
+					<p>{@html quizz.description}</p>
 					<button on:click={nextStep}>
 						<i class="gg-arrow-right"></i>
 						<span>Commencer</span>
@@ -207,7 +207,7 @@
 						{#if quizz.questions[questionId - 1].type === "checkbox"}
 							{#each quizz.questions[questionId - 1].answers as answer}
 								<label class="input-checkbox">
-									{#if answers[questionId] == answer.id}
+									{#if answers[questionId] && answers[questionId].split(',').includes(answer.id.toString())}
 										<input type="checkbox" name="answer" value={answer.id} checked />
 									{:else}
 										<input type="checkbox" name="answer" value={answer.id} />
@@ -279,7 +279,7 @@
 											</li>
 										{/each}
 									{:else}
-										{#if answers[question.id] && new RegExp(question.regex_check).test(answers[question.id])}
+										{#if answers[question.id] && new RegExp(question.regex_check, 'i').test(answers[question.id])}
 											<div class="answer-check ok">
 												<i class="gg-check"></i>
 												<span>Bonne réponse</span>&nbsp;:&nbsp;<span class="italic">{answers[question.id]}</span>
@@ -291,7 +291,7 @@
 											</div>
 
 											<p class='explanation'>La réponse attendue était : 
-												<code>{question.regex_check.replace(/\\s\+/g, ' ').replace(/\\/g, '')}</code>
+												<code>{question.regex_check.replace(/\\s\*/g, ' ').replace(/\\s\+/g, ' ').replace(/\\/g, '')}</code>
 											</p>
 										{/if}
 									{/if}
