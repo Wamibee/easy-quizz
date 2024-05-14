@@ -180,14 +180,13 @@
 					<h1>{@html quizz.title}</h1>
 					<p class="quizz-description">{@html quizz.description}</p>
 					<hr>
-					{#if quizz.open}
-						<button on:click={nextStep}>
-							<i class="gg-arrow-right"></i>
-							<span>C'est parti !</span>
-						</button>
-					{:else}
-						<p class="italic">Ce quizz est actuellement fermé, veuillez réessayer plus tard ou contacter l'administrateur.</p>
-					{/if}
+					<button on:click={nextStep} style="{quizz.open ? '' : 'display: none'}">
+						<i class="gg-arrow-right"></i>
+						<span>C'est parti !</span>
+					</button>
+					<p class="italic" style="{!quizz.open ? '' : 'display: none'}">
+						Ce quizz est actuellement fermé, veuillez réessayer plus tard ou contacter l'administrateur.
+					</p>
 				{:else if questionId > 0 && questionId <= quizz.questions.length}
 					<div class="quizz-header">
 						<button class="secondary" on:click={previousStep}>
