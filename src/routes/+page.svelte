@@ -180,10 +180,14 @@
 					<h1>{@html quizz.title}</h1>
 					<p class="quizz-description">{@html quizz.description}</p>
 					<hr>
-					<button on:click={nextStep}>
-						<i class="gg-arrow-right"></i>
-						<span>C'est parti !</span>
-					</button>
+					{#if quizz.open}
+						<button on:click={nextStep}>
+							<i class="gg-arrow-right"></i>
+							<span>C'est parti !</span>
+						</button>
+					{:else}
+						<p class="italic">Ce quizz est actuellement fermé, veuillez réessayer plus tard ou contacter l'administrateur.</p>
+					{/if}
 				{:else if questionId > 0 && questionId <= quizz.questions.length}
 					<div class="quizz-header">
 						<button class="secondary" on:click={previousStep}>
@@ -297,7 +301,7 @@
 									{:else}
 										<div class="answer-check not-ok">
 											<i class="gg-close"></i>
-											<span>Mauvaise réponse</span>&nbsp;:&nbsp;<span class="italic">{answers[question.id]}</span>
+											<span>Votre réponse</span>&nbsp;:&nbsp;<span class="italic">{answers[question.id]}</span>
 										</div>
 
 										<p class='explanation'>La réponse attendue était : 
