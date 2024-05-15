@@ -1,6 +1,6 @@
 # Easy quizz platform 
 
-Simple and quick-to-set-up project for self-hosted quizzes, with answers saved in browser storage.
+Simple and quick-to-set-up project for self-hosted quizzes, with users answers saved in browser storage
 
 This project is open for contributions, whether it's through raising issues, submitting pull requests, or suggesting improvements.
 
@@ -60,6 +60,3 @@ You can preview the production build with `npm run preview`.
 ![image](https://github.com/Wamibee/easy-quizz/assets/54935766/a3a35be7-4b14-46de-87c2-6406179836d4)
 
 ![image](https://github.com/Wamibee/easy-quizz/assets/54935766/daa2ff19-3b2c-43c2-9316-7cc250eb73ab)
-
-
-

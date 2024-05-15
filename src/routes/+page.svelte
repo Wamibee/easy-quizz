@@ -278,7 +278,13 @@
 						</p>
 					{/if}
 
-					<button on:click={saveAnswer}>Valider</button>
+					<button on:click={saveAnswer}>
+						{#if quizz.lang == "fr"}
+							Valider
+						{:else}
+							Submit
+						{/if}
+					</button>
 				{:else}
 					<h1>
 						{#if quizz.lang == "fr"}
@@ -308,17 +314,19 @@
 					<!-- Voir tous ses résultats -->
 					
 					<div class="results">
-						{#each quizz.questions as question}
+						{#each quizz.questions as question, qIndex}
 							<div class="question">
 								<div>
-									<b>Question #{question.id} : </b>
+									<b>Question #{qIndex + 1} : </b>
 									<span class="italic">{@html question.title}</span>
 								</div>
 								<hr>
 								<!-- Si c'était une question à choix, lister les choix et marqué celui choisi -->
 								{#if question.answers.length > 0}
+									
 									{#each question.answers as answer}
-										<li class="answer-option {answer.is_correct ? 'answer-valid' : 'answer-not-valid'} {answers[question.id] == answer.id ? 'selected-answer' : ''} {(question.type == "checkbox" && answers[question.id] && answers[question.id].split(',').includes(answer.id.toString())) ? 'selected-answer' : ''}">
+
+										<li class="answer-option {answer.is_correct ? 'answer-valid' : 'answer-not-valid'} {answers[qIndex + 1] == answer.id ? 'selected-answer' : ''} {(question.type == "checkbox" && answers[qIndex + 1] && answers[qIndex + 1].split(',').includes(answer.id.toString())) ? 'selected-answer' : ''}">
 											<div class="answer-line italic">
 												{#if answer.is_correct}
 													<i class="gg-check"></i>
@@ -326,7 +334,7 @@
 													<i class="gg-close"></i>
 												{/if}
 												{answer.label}
-												{#if question.type == "checkbox" && answers[question.id] && answers[question.id].split(',').includes(answer.id.toString())}
+												{#if question.type == "checkbox" && answers[qIndex + 1] && answers[qIndex + 1].split(',').includes(answer.id.toString())}
 													&nbsp;&nbsp;
 													{#if quizz.lang == "fr"}
 														(votre réponse)
@@ -334,7 +342,7 @@
 														(your answer)
 													{/if}
 												{/if}
-												{#if question.type == "radio" && answers[question.id] == answer.id}
+												{#if question.type == "radio" && answers[qIndex + 1] == answer.id}
 													&nbsp;&nbsp;
 													{#if quizz.lang == "fr"}
 														(votre réponse)
@@ -349,7 +357,7 @@
 										</li>
 									{/each}
 								{:else}
-									{#if answers[question.id] && new RegExp(question.regex_check, 'i').test(answers[question.id])}
+									{#if answers[qIndex + 1] && new RegExp(question.regex_check, 'i').test(answers[qIndex + 1])}
 										<div class="answer-check ok">
 											<i class="gg-check"></i>
 											<span>
@@ -359,7 +367,7 @@
 													Correct answer
 												{/if}
 											</span>
-											&nbsp;:&nbsp;<span class="italic">{answers[question.id]}</span>
+											&nbsp;:&nbsp;<span class="italic">{answers[qIndex + 1]}</span>
 										</div>
 									{:else}
 										<div class="answer-check not-ok">
@@ -370,7 +378,7 @@
 												{:else}
 													Your answer
 												{/if}
-											</span>&nbsp;:&nbsp;<span class="italic">{answers[question.id]}</span>
+											</span>&nbsp;:&nbsp;<span class="italic">{answers[qIndex + 1]}</span>
 										</div>
 
 										<p class='explanation'>
