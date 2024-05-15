@@ -162,9 +162,6 @@
 <section>
 	{#if !hasSlug || !quizz}
 		<div class="not-found">
-			<h1>
-				Welcome to Queazy
-			</h1>
 			<p>
 				It seems like you can't reach any valid quiz with this URL. If you think this is an error, please contact your quiz administrator.
 			</p>
