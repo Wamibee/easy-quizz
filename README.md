@@ -1,36 +1,55 @@
-# SvelteKit Demo app
+# Easy quizz platform 
 
-The official demo app for SvelteKit, hosted on Vercel.
+Simple and quick-to-set-up project for self-hosted quizzes, with answers saved in browser storage.
 
-## Deploy Your Own
+This project is open for contributions, whether it's through raising issues, submitting pull requests, or suggesting improvements.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fvercel%2Ftree%2Fmain%2Fexamples%2Fsveltekit-1&project-name=sveltekit-vercel&repository-name=sveltekit-vercel&demo-title=SvelteKit%20%2B%20Vercel&demo-url=https%3A%2F%2Fsveltekit-template.vercel.app%2F)
+To deploy it for free, you can utilize Vercel and leverage their free database option.
 
-_Live Example: https://sveltekit-template.vercel.app_
+## Quick summary of how the app works : 
+
+- Quizzes are accessed via their slug, defined in the "quizz" parameter of the URL.
+- Currently, all quiz, question, and answer creation is done directly in the database; there's no interface for that yet.
+- Utilizes Dexie for storing user answers in browser storage.
+- Usage of SCSS for the app's style.
+- Prerender is disabled to allow ``$page.url.searchParams.get('quizz')``
+- The project was built using ``@vercel/postgres`, Vercel's PostgreSQL package for serverless functions
+
+## Database structure 
+
+Table ``qe_quizz``, columns : 
+- ``id`` : integer, primary key
+- ``title`` : varchar, supports HTML
+- ``description`` : varchar, nullable, supports HTML
+- ``slug`` : varchar, used to access the quiz in url, should not contain special characters except "-", or spaces
+- ``open`` : boolean, allows users to start the quizz or not (hides the "start" button)
+- ``retry`` : boolean, allows users to re-start the quizz or not  (hides the "restart" button)
+- ``lang`` : varchar, defines the interface language (like buttons text), supports "en" (default) or "fr"
+
+Table ``qe_questions``, columns : 
+- ``id`` : integer, primary key
+- ``quizz_id`` : integer, foreign key referencing ``qe_quizz`` table
+- ``title`` : varchar, supports  HTML
+- ``description`` : varchar, nullable, used to add more informations or hints to the question, supports HTML
+- ``type`` : varchar, supported types are "text", "url", "checkbox" and "radio"
+- ``regex_check`` : varchar, nullable, used to check answers when type is "text" or "url"
+
+Table ``qe_answers``, columns :  
+- ``id`` : integer, primary key
+- ``question_id`` : integer, foreign key referencing ``qe_questions`` table
+- ``label`` : varchar, label of the answer
+- ``is_correct`` : boolean, defines if the answer is correct of not
+- ``explanation`` : varchar, nullable, provides indication to help the user understand why the answer is correct or not
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+To launch the project for the first time, remember to run ``npm install`` and create the database with its tables. Additionally, create an ``.env`` file and set up your paths for database information.
 
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+To start coding for the project, use npm run dev.
 
 ## Building
 
-To create a production version of your app:
-
-```bash
-npm run build
-```
+To create a production version : ``npm run build``.
 
 You can preview the production build with `npm run preview`.
 
-## Speed Insights
-
-Once deployed on Vercel, you can benefit from [Speed Insights](https://vercel.com/docs/concepts/speed-insights) simply by navigating to Vercel's dashboard, clicking on the 'Speed Insights' tab, and enabling the product.
-
-You will get data once your application will be re-deployed and will receive visitors.

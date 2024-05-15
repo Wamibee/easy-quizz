@@ -8,7 +8,6 @@
 	let selectedQuizz = "";
 	let quizzId = 0;
 	let questionId = 0;
-	let questions = [];
 	let answers = {};
 	let answerIsValid = true;
 	let loading = true;
@@ -157,23 +156,27 @@
 </script>
 
 <svelte:head>
-	<title>Queazy</title>
+	<title>Queazy - Easy self-hosted quizz</title>
 </svelte:head>
 
 <section>
 	{#if !hasSlug || !quizz}
 		<div class="not-found">
 			<h1>
-				Bienvenue sur Queazy
+				Welcome to Queazy
 			</h1>
-			<h2>Il semblerait que vous n'ayez pas de quizz valide sélectionné !</h2>
+			<p>
+				It seems like you can't reach any valid quiz with this URL. If you think this is an error, please contact your quiz administrator.
+			</p>
+			<small>
+				If you want to host your own quiz, you can check the <a href="https://github.com/Wamibee/easy-quiz" target="_blank">source code and documentation here</a>.
+			</small>
 		</div>
 	{:else}
 		<div class="quizz-container">
 			{#if loading}
 				<div class="flex-container">
 					<i class="gg-spinner-two"></i>
-					<p>Chargement...</p>
 				</div>
 			{:else}
 				{#if questionId === 0}
@@ -182,17 +185,27 @@
 					<hr>
 					<button on:click={nextStep} style="{quizz.open ? '' : 'display: none'}">
 						<i class="gg-arrow-right"></i>
-						<span>C'est parti !</span>
+						{#if quizz.lang == "fr"}
+							<span>C'est parti !</span>
+						{:else}
+							<span>Let's go !</span>
+						{/if}
 					</button>
 					<p class="italic" style="{!quizz.open ? '' : 'display: none'}">
-						Ce quizz est actuellement fermé, veuillez réessayer plus tard ou contacter l'administrateur.
+						{#if quizz.lang == "fr"}
+							Ce quizz est actuellement fermé, veuillez réessayer plus tard ou contacter l'administrateur.
+						{:else}
+							This quiz is currently closed, please try again later or contact the administrator.
+						{/if}
 					</p>
 				{:else if questionId > 0 && questionId <= quizz.questions.length}
 					<div class="quizz-header">
 						<button class="secondary" on:click={previousStep}>
 							<i class="gg-arrow-left"></i>
 						</button>
-						<span class="quizz-step">Question {questionId} / {quizz.questions.length}</span>
+						<span class="quizz-step">
+							Question {questionId} / {quizz.questions.length}
+						</span>
 					</div>
 					
 					<h1 class="">Question #{questionId}</h1>
@@ -202,17 +215,30 @@
 					{/if}
 
 					{#if quizz.questions[questionId - 1].type === "checkbox"}
-						<p class="italic">Choisissez une ou plusieurs réponses</p>
+						<p class="italic">
+							{#if quizz.lang == "fr"}
+								Choisissez une ou plusieurs réponses
+							{:else}
+								Select one or more answers
+							{/if}
+						</p>
 					{/if}
 
 					{#if quizz.questions[questionId - 1].type === "radio"}
-						<p class="italic">Choisissez une seule réponse</p>
+						<p class="italic">
+							{#if quizz.lang == "fr"}
+								Choisissez une seule réponse
+							{:else}
+								Select one answer
+							{/if}
+						</p>
 					{/if}
 					
 					<div class="question-input-section">
 						<!-- Si la question est de type texte ou url, alors on met un input -->
 						{#if quizz.questions[questionId - 1].type === "text" || quizz.questions[questionId - 1].type === "url"}
-							<input placeholder="Insérez une réponse" type="{quizz.questions[questionId - 1].type}" value="{answers[questionId] ? answers[questionId] : ''}" />
+							<input placeholder="{quizz.lang == "fr" ? 'Insérez une réponse' : 'Type your answer'}" 
+								type="{quizz.questions[questionId - 1].type}" value="{answers[questionId] ? answers[questionId] : ''}" />
 						{/if}
 
 						<!-- Si la question est de type choix multiple, alors on met des boutons checkbox -->
@@ -246,15 +272,39 @@
 					</div>
 
 					{#if answerIsValid === false}
-						<p class="error">Veuillez renseigner une réponse !</p>
+						<p class="error">
+							{#if quizz.lang == "fr"}
+								Veuillez indiquer une réponse
+							{:else}
+								Please provide an answer
+							{/if}
+						</p>
 					{/if}
 
 					<button on:click={saveAnswer}>Valider</button>
 				{:else}
-					<h1>Vous avez répondu à toutes les questions, bravo !</h1>
-					<p>Le quizz est enfin terminé, vous pouvez consulter vos résultats ci-dessous !</p>
+					<h1>
+						{#if quizz.lang == "fr"}
+							Vous avez répondu à toutes les questions, bravo !
+						{:else}
+							You have answered all the questions, congratulations!
+						{/if}
+					</h1>
+					<p>
+						{#if quizz.lang == "fr"}
+							Le quizz est enfin terminé, vous pouvez consulter vos résultats ci-dessous !
+						{:else}
+							The quiz is finally over, you can check your results below!
+						{/if}
+					</p>
 
-					<button on:click={reset} style="{!quizz.retry ? 'display: none' : ''}">Recommencer</button>
+					<button on:click={reset} style="{!quizz.retry ? 'display: none' : ''}">
+						{#if quizz.lang == "fr"}
+							Recommencer
+						{:else}
+							Restart
+						{/if}
+					</button>
 
 					<hr>
 
@@ -280,10 +330,20 @@
 												{/if}
 												{answer.label}
 												{#if question.type == "checkbox" && answers[question.id] && answers[question.id].split(',').includes(answer.id.toString())}
-													&nbsp;&nbsp;(votre réponse)
+													&nbsp;&nbsp;
+													{#if quizz.lang == "fr"}
+														(votre réponse)
+													{:else}
+														(your answer)
+													{/if}
 												{/if}
 												{#if question.type == "radio" && answers[question.id] == answer.id}
-													&nbsp;&nbsp;(votre réponse)
+													&nbsp;&nbsp;
+													{#if quizz.lang == "fr"}
+														(votre réponse)
+													{:else}
+														(your answer)
+													{/if}
 												{/if}
 											</div>
 											{#if answer.explanation}
@@ -295,15 +355,33 @@
 									{#if answers[question.id] && new RegExp(question.regex_check, 'i').test(answers[question.id])}
 										<div class="answer-check ok">
 											<i class="gg-check"></i>
-											<span>Bonne réponse</span>&nbsp;:&nbsp;<span class="italic">{answers[question.id]}</span>
+											<span>
+												{#if quizz.lang == "fr"}
+													Bonne réponse
+												{:else}
+													Correct answer
+												{/if}
+											</span>
+											&nbsp;:&nbsp;<span class="italic">{answers[question.id]}</span>
 										</div>
 									{:else}
 										<div class="answer-check not-ok">
 											<i class="gg-close"></i>
-											<span>Votre réponse</span>&nbsp;:&nbsp;<span class="italic">{answers[question.id]}</span>
+											<span>
+												{#if quizz.lang == "fr"}
+													Votre réponse
+												{:else}
+													Your answer
+												{/if}
+											</span>&nbsp;:&nbsp;<span class="italic">{answers[question.id]}</span>
 										</div>
 
-										<p class='explanation'>La réponse attendue était : 
+										<p class='explanation'>
+											{#if quizz.lang == "fr"}
+												La réponse attendue était : 
+											{:else}
+												The expected answer was :
+											{/if}
 											<code>{question.regex_check.replace(/\\s\*/g, ' ').replace(/\\s\+/g, ' ').replace(/\\/g, '')}</code>
 										</p>
 									{/if}

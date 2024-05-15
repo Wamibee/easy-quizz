@@ -1,5 +1,5 @@
 import { env } from '$env/dynamic/private';
-import { createPool, sql } from '@vercel/postgres';
+import { createPool } from '@vercel/postgres';
 
 export const prerender = false;
 
