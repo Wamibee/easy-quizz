@@ -53,3 +53,13 @@ To create a production version : ``npm run build``.
 
 You can preview the production build with `npm run preview`.
 
+## Screenshots 
+
+![image](https://github.com/Wamibee/easy-quizz/assets/54935766/1c55a1c9-73b5-41fb-a52a-09c17079dfe1)
+
+![image](https://github.com/Wamibee/easy-quizz/assets/54935766/a3a35be7-4b14-46de-87c2-6406179836d4)
+
+![image](https://github.com/Wamibee/easy-quizz/assets/54935766/daa2ff19-3b2c-43c2-9316-7cc250eb73ab)
+
+
+
